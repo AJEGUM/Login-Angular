@@ -40,16 +40,26 @@ export class RolesComponent {
   // Funcion para cargar los roles
   cargarRoles() {
     this.rolesService.obtenerRoles().subscribe({
-      next: (data) => this.roles = data,
-      error: (err) => console.error('Error al obtener roles', err)
+      next: (data) => {
+        this.roles = Array.isArray(data) ? data : [];
+      },
+      error: (err) => {
+        console.error('Error al obtener roles', err);
+        this.roles = [];
+      }
     });
   }
 
   // Funcion para cargar los permisos
   cargarPermisos() {
     this.permisosService.obtenerPermisos().subscribe({
-      next: (data) => this.permisosDisponibles = data,
-      error: (err) => console.error('Error al obtener permisos', err)
+      next: (data) => {
+        this.permisosDisponibles = Array.isArray(data) ? data : [];
+      },
+      error: (err) => {
+        console.error('Error al obtener permisos', err);
+        this.permisosDisponibles = [];
+      }
     });
   }
 
