@@ -1,22 +1,51 @@
-<!-- Cabecera  -->
+<!-- Cabecera -->
 <header class="header">
   <div class="header-left">
     <div class="logo">⚙️</div>
     <h1>Panel Administrativo</h1>
   </div>
 
-  <div class="header-right">
+  <!-- Versión Desktop -->
+  <div class="header-right desktop-only">
     <span class="user-name">{{ usuario?.nombre || 'Usuario' }}</span>
     <span class="user-role">{{ usuario?.rol || 'Rol desconocido' }}</span>
     <button class="logout-btn" (click)="cerrarSesion()">Cerrar Sesión</button>
   </div>
+
+  <!-- Contenedor del menú hamburguesa (solo móvil) -->
+  <div class="header-menu-container mobile-only">
+    <button class="hamburger" (click)="toggleMenu()">☰</button>
+  </div>
 </header>
 
-<!-- Barra de navegacion -->
-<nav class="navbar">
-  <a routerLink="/usuarios" routerLinkActive="active">👥 Usuarios</a> <!-- Se le aplica el routerLink para que pueda apuntar a la ruta usuarios (http://localhost:4200/usuarios)-->
-  <a routerLink="/roles" routerLinkActive="active">🛡️ Roles</a> <!-- Se le aplica el routerLink para que pueda apuntar a la ruta usuarios (http://localhost:4200/roles)-->
+<!-- Barra de navegación (desktop) -->
+<nav class="navbar desktop-only">
+  <a routerLink="/usuarios" routerLinkActive="active">👥 Usuarios</a>
+  <a routerLink="/roles" routerLinkActive="active">🛡️ Roles</a>
 </nav>
+
+<!-- Overlay (oscurece fondo y cierra menú al click) -->
+<div class="overlay" *ngIf="menuAbierto" (click)="toggleMenu()"></div>
+
+<!-- Menú móvil -->
+<div class="mobile-menu" [class.show]="menuAbierto">
+  <div class="mobile-menu-header">
+    <p class="usuario-info">
+      {{ usuario?.nombre || 'Usuario' }} <br>
+      <small>{{ usuario?.rol || 'Rol desconocido' }}</small>
+    </p>
+  </div>
+
+  <nav class="mobile-nav">
+    <a routerLink="/usuarios" routerLinkActive="active" (click)="toggleMenu()">👥 Usuarios</a>
+    <a routerLink="/roles" routerLinkActive="active" (click)="toggleMenu()">🛡️ Roles</a>
+  </nav>
+
+  <!-- Contenedor para el botón de cerrar sesión -->
+  <div class="mobile-menu-footer">
+    <button class="logout-btn" (click)="cerrarSesion()">Cerrar Sesión</button>
+  </div>
+</div>
 
 <main class="content">
   <router-outlet></router-outlet>

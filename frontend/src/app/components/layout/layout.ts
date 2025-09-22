@@ -14,6 +14,7 @@ import { AuthService } from '../../services/auths/auth';
 })
 export class Layout {
   usuario: any;
+  menuAbierto = false; // controla el menú hamburguesa
 
   // Se inyecta el servicio Authservices y Router
   constructor(private auth: AuthService, private router: Router) {
@@ -23,5 +24,9 @@ export class Layout {
   cerrarSesion() {
     this.auth.cerrarSesion();
     this.router.navigate(['/login']); // Redirige al login al cerrar sesión
+  }
+
+  toggleMenu() {
+    this.menuAbierto = !this.menuAbierto;
   }
 }

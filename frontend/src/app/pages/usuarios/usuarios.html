@@ -1,37 +1,30 @@
-<div class="header-usuarios">
-  <h2>Gestión de Usuarios</h2>
-  <button class="btn-agregar" (click)="abrirModal()">+ Agregar nuevo usuario</button>
+<div class="usuarios-container">
+  <!-- Header -->
+  <div class="titulo-container">
+    <h2>Gestión de Usuarios</h2>
+    <button class="btn-add" (click)="abrirModal()">+ Agregar Usuario</button>
+  </div>
+
+  <!-- Cards de usuarios -->
+  <div class="usuario-card" *ngFor="let usuario of usuarios" (click)="abrirModal(usuario)">
+    <div class="usuario-header">
+      <span class="usuario-nombre">{{ usuario.nombre }}</span>
+    </div>
+    <p class="usuario-email">{{ usuario.email }}</p>
+
+    <div class="usuario-rol">
+      <span class="rol-badge">{{ usuario.rol || 'Sin rol' }}</span>
+    </div>
+
+    <div class="usuario-permisos">
+      <span *ngFor="let permiso of usuario.permisos" class="permiso-badge">
+        {{ permiso }}
+      </span>
+    </div>
+  </div>
 </div>
 
-<!-- Tabla -->
-<table class="usuarios-table" *ngIf="usuarios.length > 0">
-  <thead>
-    <tr>
-      <th>Usuario</th>
-      <th>Email</th>
-      <th>Rol</th>
-      <th>Permisos</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let usuario of usuarios" (click)="abrirModal(usuario)">
-      <td>
-        <div class="usuario-info">
-          <strong>{{ usuario.nombre }}</strong><br>
-        </div>
-      </td>
-      <td>{{ usuario.email }}</td>
-      <td>
-        <span class="rol-badge" [ngClass]="(usuario.rol || 'sin-rol').toLowerCase()">
-          {{ usuario.rol || 'Sin rol' }}
-        </span>
-      </td>
-      <td>{{ usuario.permisos }}</td>
-    </tr>
-  </tbody>
-</table>
-
-<!-- Modal -->
+<!-- Modal (igual al que ya tienes) -->
 <div class="modal-backdrop" *ngIf="mostrarModal">
   <div class="modal">
     <div class="modal-header">
