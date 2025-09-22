@@ -246,6 +246,55 @@ form select:focus {
 }
 .btn-delete:hover { background: #d62828; }
 
+:host-context(body.dark-mode) .page-container {
+  background: #1e1e2f;
+  color: #f5f5f5;
+}
+
+/* ==== MODO OSCURO ==== */
+:host-context(body.dark-mode) .titulo-container h2,
+:host-context(body.dark-mode) .usuario-nombre,
+:host-context(body.dark-mode) .usuario-email,
+:host-context(body.dark-mode) .rol-badge,
+:host-context(body.dark-mode) .permiso-badge,
+:host-context(body.dark-mode) form label,
+:host-context(body.dark-mode) .permisos-lista,
+:host-context(body.dark-mode) .modal-header h3 {
+  color: #f5f5f5; /* letras claras */
+}
+
+:host-context(body.dark-mode) .usuario-card {
+  background: #2a2a3f;
+  color: #f5f5f5;
+}
+
+:host-context(body.dark-mode) .rol-badge {
+  background: #374151;
+  color: #e5e5e5;
+}
+
+:host-context(body.dark-mode) .permiso-badge {
+  background: #374151;
+  color: #e5e5e5;
+}
+
+:host-context(body.dark-mode) .modal {
+  background: #2a2a3f;
+  color: #f5f5f5;
+}
+
+:host-context(body.dark-mode) .close-btn {
+  color: #f5f5f5;
+}
+
+:host-context(body.dark-mode) form input,
+:host-context(body.dark-mode) form select {
+  background: #1e1e2f;
+  border: 1px solid #444;
+  color: #f5f5f5;
+}
+
+
 /* ==== RESPONSIVE ==== */
 @media (max-width: 768px) {
   .usuarios-container {

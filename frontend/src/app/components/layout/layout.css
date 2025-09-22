@@ -1,3 +1,8 @@
+/* ==== FUENTE GLOBAL SOLO EN ESTE COMPONENTE ==== */
+:host {
+  font-family: "Poppins", sans-serif;
+}
+
 /* ==== HEADER ==== */
 .header {
   display: flex;
@@ -12,10 +17,6 @@
   display: flex;
   align-items: center;
   gap: 10px;
-}
-
-.logo {
-  font-size: 24px;
 }
 
 .header h1 {
@@ -40,6 +41,48 @@
 
 .logout-btn:hover {
   background: #d62828;
+}
+
+/* ==== BOTÓN SOL / LUNA ==== */
+.theme-toggle {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  width: 40px;
+  height: 40px;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-toggle .sun,
+.theme-toggle .moon {
+  position: absolute;
+  font-size: 22px;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.theme-toggle .sun {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+.theme-toggle .moon {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.5);
+}
+
+/* DARK MODE cambia iconos */
+:host-context(body.dark-mode) .theme-toggle .sun {
+  opacity: 0;
+  transform: rotate(90deg) scale(0.5);
+}
+
+:host-context(body.dark-mode) .theme-toggle .moon {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
 }
 
 /* ==== NAVBAR DESKTOP ==== */
@@ -76,13 +119,13 @@
   width: 100%;
   height: 100%;
   background: rgba(0,0,0,0.5);
-  z-index: 999; /* debajo del menú */
+  z-index: 999;
 }
 
 .mobile-menu {
   position: fixed;
   top: 0;
-  right: 0; /* desde la derecha */
+  right: 0;
   width: 250px;
   height: 100%;
   background: #fff;
@@ -92,12 +135,12 @@
   flex-direction: column;
   gap: 20px;
   z-index: 1000;
-  transform: translateX(100%); /* oculto */
+  transform: translateX(100%);
   transition: transform 0.3s ease-in-out;
 }
 
 .mobile-menu.show {
-  transform: translateX(0); /* visible */
+  transform: translateX(0);
 }
 
 .mobile-menu-header {
@@ -130,7 +173,6 @@
   color: #007bff;
 }
 
-/* Contenedor para el botón cerrar sesión en menú */
 .mobile-menu-footer {
   margin-top: auto;
   padding-top: 15px;
@@ -167,6 +209,39 @@
     display: none !important;
   }
   .mobile-only {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
+}
+
+/* ==== DARK MODE ==== */
+:host-context(body.dark-mode) .header {
+  background: #0f0f1f;
+  color: #f5f5f5;
+}
+
+:host-context(body.dark-mode) .navbar {
+  background: #0d0d18;
+}
+
+:host-context(body.dark-mode) .navbar a {
+  color: #ddd;
+}
+
+:host-context(body.dark-mode) .navbar a.active {
+  color: #00e0ff;
+}
+
+:host-context(body.dark-mode) .mobile-menu {
+  background: #1c1c2e;
+  color: #fff;
+}
+
+:host-context(body.dark-mode) .mobile-nav a {
+  color: #eee;
+}
+
+:host-context(body.dark-mode) .mobile-nav a.active {
+  color: #00e0ff;
 }

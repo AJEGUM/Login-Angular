@@ -15,6 +15,8 @@ import { AuthService } from '../../services/auths/auth';
 export class Layout {
   usuario: any;
   menuAbierto = false; // controla el menú hamburguesa
+  isDarkMode = false;
+
 
   // Se inyecta el servicio Authservices y Router
   constructor(private auth: AuthService, private router: Router) {
@@ -29,4 +31,13 @@ export class Layout {
   toggleMenu() {
     this.menuAbierto = !this.menuAbierto;
   }
+
+  toggleTheme() {
+  this.isDarkMode = !this.isDarkMode;
+  if (this.isDarkMode) {
+    document.body.classList.add('dark-mode');
+  } else {
+    document.body.classList.remove('dark-mode');
+  }
+}
 }
