@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class PermisosService {
 
   // LOS SERVICES SIRVEN PARA HACER PETICIONES HTTP AL BACKEND 
 
-  private apiUrl = 'http://localhost:3000/api/permisos';
+  private apiUrl = `${environment.API_URL}/permisos`;
 
   constructor(private http: HttpClient) {}
 

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +10,7 @@ export class AuthService {
 
   // LOS SERVICES SIRVEN PARA HACER PETICIONES HTTP AL BACKEND 
 
-  private apiUrl = 'http://localhost:3000/api/auth'; // tu backend
+  private apiUrl = `${environment.API_URL}/auth`; // ahora usa environment
   private claveToken = 'token';   // clave para almacenar el token en localStorage
   private claveUsuario = 'usuario'; // clave para almacenar el usuario en localStorage
 
