@@ -7,12 +7,13 @@ async obtenerUsuarios(req, res) {
   try {
     const [usuarios] = await db.query(
       `SELECT u.id_usuario, u.nombre, u.email, r.nombre AS rol,
-              COALESCE(GROUP_CONCAT(p.nombre ORDER BY p.id_permiso SEPARATOR ', '), 'Sin permisos') AS permisos
-       FROM usuarios u
-       LEFT JOIN roles r ON u.id_rol = r.id_rol
-       LEFT JOIN rol_permiso rp ON r.id_rol = rp.id_rol
-       LEFT JOIN permisos p ON rp.permiso_id = p.id_permiso
-       GROUP BY u.id_usuario, u.nombre, u.email, r.nombre`
+       COALESCE(JSON_ARRAYAGG(p.nombre), JSON_ARRAY()) AS permisos
+        FROM usuarios u
+        LEFT JOIN roles r ON u.id_rol = r.id_rol
+        LEFT JOIN rol_permiso rp ON r.id_rol = rp.id_rol
+        LEFT JOIN permisos p ON rp.permiso_id = p.id_permiso
+        GROUP BY u.id_usuario, u.nombre, u.email, r.nombre;
+        `
     );
 
     res.json(usuarios);
