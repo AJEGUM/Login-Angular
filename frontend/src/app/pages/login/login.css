@@ -1,0 +1,107 @@
+/* Contenedor que ocupa toda la pantalla */
+* {
+  box-sizing: border-box;
+}
+
+
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* siempre ocupa toda la altura */
+  padding: 1rem; /* evita que se pegue a los bordes en pantallas pequeñas */
+}
+
+/* Caja del login */
+.login-container {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 380px; /* no pasa de este ancho en PC */
+  text-align: center;
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+/* Título */
+.login-container h2 {
+  margin-bottom: 1.5rem;
+  color: #333;
+  font-size: 1.8rem;
+}
+
+/* Inputs */
+.login-container input {
+  width: 100%;
+  padding: 0.9rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 0.7rem;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.3s ease;
+}
+
+.login-container input:focus {
+  border-color: #6a11cb;
+  box-shadow: 0 0 6px rgba(106, 17, 203, 0.3);
+}
+
+/* Botón */
+.login-container button {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  color: #fff;
+  border: none;
+  border-radius: 0.7rem;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.login-container button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Animación */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 📱 Responsive para móviles */
+@media (max-width: 480px) {
+  .login-wrapper {
+    padding: 0.5rem; /* un poco de aire en los lados */
+  }
+
+  .login-container {
+    width: 100%;
+    max-width: 100%; /* que use todo el ancho disponible */
+    padding: 1.5rem 1rem; /* menos padding lateral */
+    border-radius: 0.8rem;
+  }
+
+  .login-container h2 {
+    font-size: 1.4rem;
+  }
+
+  .login-container input {
+    padding: 0.8rem;
+    font-size: 0.95rem;
+  }
+
+  .login-container button {
+    padding: 0.9rem;
+    font-size: 1rem;
+  }
+}
