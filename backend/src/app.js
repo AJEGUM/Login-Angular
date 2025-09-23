@@ -10,7 +10,7 @@ app.use(express.json({ limit: '20mb' })); // Recibe datos en formato JSON con lÃ
 app.use(express.urlencoded({ extended: true, limit: '20mb' })); // Recibe datos codificados
 
 app.get('/', (req, res) => {
-  res.send('ok'); // Ruta que verifica si esta funcionando el servidor
+  res.send('ok'); // Ruta que verifica si esta funcionando el servidor en el navegador
 });
 
 // Rutas
@@ -19,6 +19,5 @@ app.use('/api/permisos', require('./routes/permisos.routes'));
 app.use('/api/rol-permiso', require('./routes/roles_permisos.routes'));
 app.use('/api/roles', require('./routes/roles.routes'));
 app.use('/api/usuarios', require('./routes/usuarios.routes'));
-
 
 module.exports = app;
