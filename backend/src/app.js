@@ -10,7 +10,7 @@ app.use(express.json({ limit: '20mb' })); // Recibe datos en formato JSON con lÃ
 app.use(express.urlencoded({ extended: true, limit: '20mb' })); // Recibe datos codificados
 
 app.get('/', (req, res) => {
-  res.send('API funcionando');
+  res.send('ok');
 });
 
 // Rutas
