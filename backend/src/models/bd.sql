@@ -1,4 +1,4 @@
-create database clinica;
+CREATE DATABASE IF NOT EXISTS clinica;
 use clinica;
 
 CREATE TABLE roles (
