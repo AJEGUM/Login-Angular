@@ -56,3 +56,6 @@ services:
 # El volumen 'db_data' permite preservar la integridad de la información ante reinicios o eliminaciones.
 volumes:
   db_data:
+
+# Comando para iniciar el proyecto = docker compose --env-file ./backend/.env up --build
+# Tenga en cuenta que en el backend debe estar el archivo .env y las variables de entorno deben de ser las mismas que hay en este archivo
