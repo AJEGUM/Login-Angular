@@ -1,40 +1,47 @@
-# 1. Imagen base de construcción
-# Se emplea Node.js 22 sobre Alpine Linux para el proceso de compilación.
-# El alias "AS build" permite referenciar los artefactos generados en etapas posteriores.
+# ETAPA 1: BUILD
+# Usamos Node.js 22 sobre Alpine Linux (distro ultraligera ~5MB)
+# para instalar dependencias y compilar el proyecto.
+# "AS build" le da un nombre a esta etapa para referenciarla
+# más adelante en la etapa de producción.
 FROM node:22-alpine AS build
 
-# 2. Directorio de trabajo
-# Define la ruta interna donde se ejecutará la instalación y el build.
+# Define /app como directorio de trabajo dentro del contenedor.
+# Todos los comandos siguientes (COPY, RUN, etc.) se ejecutan desde aquí.
 WORKDIR /app
 
-# 3. Gestión de dependencias
-# Se transfieren los archivos de manifiesto (package.json) para la instalación de módulos.
-# Este paso precede al copiado del código fuente para optimizar el uso de la caché de Docker.
+# --- Optimización de caché de Docker ---
+# Docker construye por capas. Si copiamos SOLO el package.json primero
+# e instalamos dependencias, Docker cachea esa capa.
+# En rebuilds posteriores, si el código cambió pero el package.json NO,
+# Docker reutiliza la capa cacheada y se salta el npm install.
+# Esto puede ahorrar varios minutos en cada reconstrucción.
 COPY package*.json ./
 RUN npm install
 
-# 4. Copiado y compilación
-# Se transfiere la totalidad del código fuente y se ejecuta el script de construcción.
-# El resultado se almacena en el directorio /dist de acuerdo a la configuración del framework.
+# Ahora sí copiamos todo el código fuente y ejecutamos el build.
+# El resultado compilado (HTML, JS, CSS optimizados) quedará en /app/dist.
+# IMPORTANTE: este paso va DESPUÉS del npm install para aprovechar la caché.
 COPY . .
 RUN npm run build
 
-# 1. Imagen base de producción
-# Se utiliza Nginx Alpine por su alta eficiencia y bajo consumo de recursos
-# al servir archivos estáticos (HTML, JS, CSS).
+# ETAPA 2: PRODUCCIÓN
+# Arrancamos desde CERO con una imagen de Nginx limpia y mínima.
+# Todo lo anterior (Node, npm, código fuente, node_modules) queda
+# descartado y NO forma parte de la imagen final.
 FROM nginx:alpine
 
-# 2. Transferencia de artefactos
-# Se extrae únicamente el contenido compilado de la etapa anterior ("--from=build").
-# La ruta de origen debe validarse según la configuración de salida (outputPath) 
-# de la tecnología utilizada (Angular, React, Vue, etc.).
+# Copiamos ÚNICAMENTE los archivos compilados de la etapa anterior.
+# "--from=build" referencia la etapa que nombramos arriba.
+# Solo viaja el resultado final, no la cocina que lo produjo.
+# La ruta /app/dist/frontend/browser puede variar según el framework.
 COPY --from=build /app/dist/frontend/browser /usr/share/nginx/html
 
-# 3. Configuración de red
-# Establece el puerto 80 como el canal de comunicación del contenedor.
+# El contenedor escucha en el puerto 80.
+# por sí solo NO abre el puerto al exterior.
 EXPOSE 80
 
-# 4. Ejecución del servicio
-# Inicia el servidor Nginx en primer plano (daemon off) para garantizar
-# la persistencia del proceso dentro del contenedor.
+# Inicia Nginx en primer plano.
+# Docker no administra procesos como un SO, el solamente mira el el proceso principal, si este muere docker apaga el contenedor por COMPLETO
+# asi que "daemon off" es el encargado de decirle a cada proceso que se mantenga activo para que docker pueda vigilar
+# y no apagar el contendor por solo un proceso (El cual pasa mucho con el Ngnix)
 CMD ["nginx", "-g", "daemon off;"]
