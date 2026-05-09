@@ -1,48 +1,58 @@
 services:
-  # --- SERVICIO 1: BASE DE DATOS (MySQL) ---
-  database1: # Nombre del servicio
+  # --- SERVICIO 1: Motor de Base de Datos (MySQL) ---
+  database1:
+    # Utiliza la imagen oficial de MySQL versión 8.0.
     image: mysql:8.0
-    # Importamos el archivo .env para que MySQL tome las variables de entorno
+    # Carga de variables de entorno desde un archivo externo para evitar exponer credenciales.
     env_file:
       - ./backend/.env
     environment:
-      # Definimos la contraseña root y el nombre de la DB usando las variables del .env
+      # Configuración de parámetros iniciales del motor mediante variables de entorno.
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD} 
       MYSQL_DATABASE: ${DB_NAME}
     ports:
-      - "3308:3306" # Mapeo: Acceso desde tu PC por el 3308 hacia el 3306 interno
+      # Mapeo de puertos: el puerto 3308 del host se vincula al 3306 interno del contenedor.
+      - "3308:3306"
     volumes:
-      - db_data:/var/lib/mysql # Persistencia: evita que los datos se borren al apagar
+      # Persistencia de datos: vincula un volumen lógico al directorio de datos de MySQL.
+      - db_data:/var/lib/mysql
 
-  # --- SERVICIO 2: BACKEND (Node.js) ---
+  # --- SERVICIO 2: Capa de Aplicación (Backend) ---
   backend:
-    build: ./backend # Busca el Dockerfile en la carpeta /backend
+    # Proceso de construcción basado en el Dockerfile ubicado en el directorio ./backend.
+    build: ./backend
     volumes:
-      - ./backend/.env:/app/.env # Sincroniza el archivo .env con el contenedor
+      # Montaje del archivo de configuración .env para sincronización en tiempo de ejecución.
+      - ./backend/.env:/app/.env
     env_file:
-      - ./backend/.env # Docker busca el .env en la carpeta backend
+      - ./backend/.env
     ports:
-      - "3000:3000" # Puerto de la API
+      # Exposición de la interfaz de programación de aplicaciones (API) en el puerto 3000.
+      - "3000:3000"
     environment:
-      # IMPORTANTE: El host es el nombre del servicio 'database', NO localhost
+      # Configuración de conectividad: se utiliza el nombre del servicio 'database1' como hostname.
       - DB_HOST=database1
       - DB_USER=root
       - DB_PASS=root
       - DB_NAME=clinica
       - JWT_SECRET=clave
     depends_on:
-      - database1 # Indica que MySQL debe arrancar antes que el backend
+      # Condicional de inicio: asegura que el servicio de base de datos esté operativo antes que el backend.
+      - database1
 
-  # --- SERVICIO 3: FRONTEND (Angular + Nginx) ---
+  # --- SERVICIO 3: Interfaz de Usuario (Frontend) ---
   frontend:
-    build: ./frontend # Busca el Dockerfile en la carpeta /frontend
+    # Proceso de construcción basado en el Dockerfile ubicado en el directorio ./frontend.
+    build: ./frontend
     ports:
-      - "4200:80" # Accedemos por el 4200 (puerto estándar de Angular)
+      # Mapeo del puerto 80 (Nginx interno) al puerto 4200 del host para acceso web.
+      - "4200:80"
     depends_on:
-      - backend # Indica que el backend debe estar listo antes que el frontend
+      # Condicional de inicio: el servicio depende de la disponibilidad de la API backend.
+      - backend
 
-# Definición del volumen compartido para los datos de la DB
-# Importante ya que los contenedores son volatiles, eso quiere decir que no guardan informacion, por eso utilizamos "Volumenes"
-# los cuales nos permiten guardarlo los datos y no perderlo cada vez que se reinicia o se borra un contenedor
+# --- SECCIÓN DE VOLÚMENES ---
+# Define estructuras de almacenamiento persistente para mitigar la volatilidad de los contenedores.
+# El volumen 'db_data' permite preservar la integridad de la información ante reinicios o eliminaciones.
 volumes:
   db_data:
