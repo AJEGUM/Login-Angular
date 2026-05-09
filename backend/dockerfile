@@ -1,29 +1,45 @@
-# 1. Imagen base
-# Se utiliza Node.js versión 22 sobre una distribución Alpine Linux.
-# Alpine es elegida por su ligereza, reduciendo el tamaño de la imagen y la superficie de ataque.
+# IMAGEN BASE
+# Node.js 22 sobre Alpine Linux (distro minimalista ~5MB).
+# porque Node.js es necesario en producción para ejecutar
 FROM node:22-alpine
 
-# 2. Directorio de trabajo
-# Define el espacio de nombres dentro del contenedor donde se alojará la aplicación.
-# Todas las instrucciones siguientes se ejecutarán en esta ruta.
+# Define /app como directorio de trabajo dentro del contenedor.
+# Todos los comandos siguientes (COPY, RUN, CMD) se ejecutan desde aquí.
 WORKDIR /app
 
-# 3. Gestión de dependencias (Optimización de caché)
-# Se copian los archivos de definición de dependencias (package.json y package-lock.json).
-# Instalar las dependencias en este paso permite a Docker cachear la capa de módulos;
-# esto acelera las reconstrucciones si no hay cambios en las librerías.
+# --- Optimización de caché de Docker ---
+# Copiamos SOLO el package.json primero e instalamos dependencias.
+# Docker cachea esta capa por separado del código fuente.
+# Resultado: si cambias tu código pero NO el package.json,
+# Docker reutiliza node_modules cacheado y se salta el npm install,
+# ahorrando minutos en cada reconstrucción.
 COPY package*.json ./
 RUN npm install
 
-# 4. Copiado del código fuente
-# Una vez instaladas las dependencias, se transfieren los archivos del proyecto al contenedor.
-# Esto incluye la lógica de negocio, controladores y modelos.
+# Ahora sí copiamos todo el código fuente (controladores, modelos,
+# rutas, lógica de negocio, etc.). Va DESPUÉS del npm install
+# precisamente para aprovechar la caché explicada arriba.
 COPY . .
 
-# 5. Configuración de salida
-# Indica que el contenedor escuchará peticiones en el puerto 3000.
+# El contenedor escucha internamente en el puerto 3000.
+# El mapeo real al exterior se define en el docker-compose.yml:
+#   ports:
+#     - "3000:3000"  →  host:contenedor
 EXPOSE 3000
 
-# Ejecuta el proceso principal de la aplicación mediante Node.js.
-# Se utiliza la forma de array (exec form) para una gestión correcta de señales del sistema.
+# Inicia la aplicación usando la forma de array.
+# Existen dos formas de escribir CMD:
+#
+#   Shell form:  CMD "node server.js"
+#   Exec form:   CMD ["node", "server.js"]   ← esta
+#
+# La diferencia es crítica:
+#   - Shell form: Docker lanza un shell (/bin/sh) que a su vez
+#     lanza Node. El PID 1 es el shell, no Node.
+#     Las señales del sistema (SIGTERM para apagar limpiamente)
+#     llegan al shell y Node nunca las recibe → apagado brusco.
+#
+#   - Exec form: Docker lanza Node directamente como PID 1.
+#     Las señales llegan directo a Node → puede cerrar conexiones
+#     a la DB, terminar requests activos y apagarse limpiamente.
 CMD ["node", "server.js"]
