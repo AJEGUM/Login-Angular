@@ -1,0 +1,31 @@
+# --- Dependencias y Entornos Virtuales ---
+**/node_modules
+**/.angular
+**/dist
+**/out
+
+node_modules
+dist
+.git
+
+# --- Logs de error ---
+**/*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- Control de Versiones ---
+.git
+.gitignore
+.gitattributes
+
+# --- Archivos de Sistema y Editores ---
+.vscode/
+.idea/
+.DS_Store
+thumbs.db
+
+# --- Docker ---
+**/.dockerignore
+**/Dockerfile
+**/docker-compose.yml

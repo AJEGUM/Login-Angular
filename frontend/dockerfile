@@ -1,0 +1,30 @@
+# 1. Imagen base de construcción: Usamos Node 22 (Alpine) y le asignamos 
+# el alias "build" para poder referenciar esta etapa más adelante.
+FROM node:22-alpine AS build
+
+# 2. Directorio de trabajo: Carpeta donde se procesará la compilación.
+WORKDIR /app
+
+# 3. Gestión de dependencias: Copiamos los package.json e instalamos 
+COPY package*.json ./
+RUN npm install
+
+# 4. Copiado y compilación: Pasamos el código fuente y ejecutamos 
+COPY . .
+RUN npm run build
+
+# 1. Imagen base de producción: Nginx es el estándar para servir 
+# archivos estáticos (HTML, JS, CSS) de forma ultra rápida.
+FROM nginx:alpine
+
+# 2. Transferencia de archivos:
+# Copiamos solo el resultado final desde la etapa anterior ("--from=build").
+# NOTA: Asegúrate de que la ruta interna coincida con el nombre de tu proyecto (esto cambia de la tecnologia que se este utilizando).
+COPY --from=build /app/dist/frontend/browser /usr/share/nginx/html
+
+# 3. Configuración de red: Informamos que el contenedor escucha por el puerto 80.
+EXPOSE 80
+
+# 4. Ejecución: Arrancamos Nginx en modo "daemon off" para que 
+# el proceso se mantenga activo y el contenedor no se detenga.
+CMD ["nginx", "-g", "daemon off;"]

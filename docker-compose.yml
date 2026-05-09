@@ -1,0 +1,48 @@
+services:
+  # --- SERVICIO 1: BASE DE DATOS (MySQL) ---
+  database1: # Nombre del servicio
+    image: mysql:8.0
+    # Importamos el archivo .env para que MySQL tome las variables de entorno
+    env_file:
+      - ./backend/.env
+    environment:
+      # Definimos la contraseña root y el nombre de la DB usando las variables del .env
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD} 
+      MYSQL_DATABASE: ${DB_NAME}
+    ports:
+      - "3308:3306" # Mapeo: Acceso desde tu PC por el 3308 hacia el 3306 interno
+    volumes:
+      - db_data:/var/lib/mysql # Persistencia: evita que los datos se borren al apagar
+
+  # --- SERVICIO 2: BACKEND (Node.js) ---
+  backend:
+    build: ./backend # Busca el Dockerfile en la carpeta /backend
+    volumes:
+      - ./backend/.env:/app/.env # Sincroniza el archivo .env con el contenedor
+    env_file:
+      - ./backend/.env # Docker busca el .env en la carpeta backend
+    ports:
+      - "3000:3000" # Puerto de la API
+    environment:
+      # IMPORTANTE: El host es el nombre del servicio 'database', NO localhost
+      - DB_HOST=database1
+      - DB_USER=root
+      - DB_PASS=root
+      - DB_NAME=clinica
+      - JWT_SECRET=clave
+    depends_on:
+      - database1 # Indica que MySQL debe arrancar antes que el backend
+
+  # --- SERVICIO 3: FRONTEND (Angular + Nginx) ---
+  frontend:
+    build: ./frontend # Busca el Dockerfile en la carpeta /frontend
+    ports:
+      - "4200:80" # Accedemos por el 4200 (puerto estándar de Angular)
+    depends_on:
+      - backend # Indica que el backend debe estar listo antes que el frontend
+
+# Definición del volumen compartido para los datos de la DB
+# Importante ya que los contenedores son volatiles, eso quiere decir que no guardan informacion, por eso utilizamos "Volumenes"
+# los cuales nos permiten guardarlo los datos y no perderlo cada vez que se reinicia o se borra un contenedor
+volumes:
+  db_data:
